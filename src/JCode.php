@@ -62,4 +62,11 @@ final class JCode
     protected function array_forget(&$array, $keys) {
         Arr::forget($array, $keys);
     }
+
+    /**
+     * @param array $arrayParameters
+     */
+    public function execute($arrayParameters = []) {
+
+    }
 }
