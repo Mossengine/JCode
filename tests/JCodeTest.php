@@ -12,7 +12,130 @@ class JCodeTest extends PHPUnit_Framework_TestCase
         unset($classJCode);
     }
 
-    public function testIfSingletonable() {
-        $this->assertTrue(Mossengine\JCode\JCode::Instance() instanceof Mossengine\JCode\JCode);
+    public function testJCodeVariableSet() {
+        $classJCode = new Mossengine\JCode\JCode;
+        $classJCode->execute(json_encode([
+            'variables' => [
+                'boolResult' => false
+            ],
+            'instructions' => [
+                [
+                    'type' => 'variables',
+                    'variables' => [
+                        [
+                            'variable' => 'boolResult',
+                            'value' => true
+                        ]
+                    ]
+                ]
+            ]
+        ]));
+
+        $this->assertTrue(true === $classJCode->variable('boolResult'));
+        unset($classJCode);
+    }
+
+    public function testJCodeCondtions() {
+        $classJCode = new Mossengine\JCode\JCode;
+        $classJCode->execute(json_encode([
+            'variables' => [
+                'intLeft' => 5,
+                'boolResult' => false
+            ],
+            'instructions' => [
+                [
+                    'type' => 'conditions',
+                    'conditions' => [
+                        [
+                            'type' => 'compare',
+                            'left' => [
+                                'type' => 'variable',
+                                'variable' => 'intLeft'
+                            ],
+                            'operator' => '>',
+                            'right' => [
+                                'type' => 'value',
+                                'value' => 4
+                            ],
+                        ],
+                        [
+                            'type' => 'compare',
+                            'left' => [
+                                'type' => 'variable',
+                                'variable' => 'intLeft'
+                            ],
+                            'operator' => '>=',
+                            'right' => [
+                                'type' => 'value',
+                                'value' => 5
+                            ],
+                        ],
+                        [
+                            'type' => 'compare',
+                            'left' => [
+                                'type' => 'variable',
+                                'variable' => 'intLeft'
+                            ],
+                            'operator' => '==',
+                            'right' => [
+                                'type' => 'value',
+                                'value' => 5
+                            ],
+                        ],
+                        [
+                            'type' => 'compare',
+                            'left' => [
+                                'type' => 'variable',
+                                'variable' => 'intLeft'
+                            ],
+                            'operator' => '!=',
+                            'right' => [
+                                'type' => 'value',
+                                'value' => 6
+                            ],
+                        ],
+                        [
+                            'type' => 'compare',
+                            'left' => [
+                                'type' => 'variable',
+                                'variable' => 'intLeft'
+                            ],
+                            'operator' => '<',
+                            'right' => [
+                                'type' => 'value',
+                                'value' => 6
+                            ],
+                        ],
+                        [
+                            'type' => 'compare',
+                            'left' => [
+                                'type' => 'variable',
+                                'variable' => 'intLeft'
+                            ],
+                            'operator' => '<=',
+                            'right' => [
+                                'type' => 'value',
+                                'value' => 5
+                            ],
+                        ]
+                    ],
+                    'validation' => 'all',
+                    'instructions' => [
+                        [
+                            'type' => 'variables',
+                            'variables' => [
+                                [
+                                    'variable' => 'boolResult',
+                                    'value' => true
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]));
+
+        $this->assertTrue(true === $classJCode->variable('boolResult'));
+        unset($classJCode);
     }
 }
