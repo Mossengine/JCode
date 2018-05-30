@@ -14,7 +14,31 @@ class JCodeTest extends PHPUnit_Framework_TestCase
 
     public function testJCodeVariableSet() {
         $classJCode = new Mossengine\JCode\JCode;
-        $classJCode->execute(json_encode([
+        $classJCode->execute([
+            'variables' => [
+                'boolResult' => false
+            ],
+            'instructions' => [
+                [
+                    'type' => 'variables',
+                    'variables' => [
+                        [
+                            'variable' => 'boolResult',
+                            'type' => 'value',
+                            'value' => true
+                        ]
+                    ]
+                ]
+            ]
+        ]);
+
+        $this->assertTrue(true === $classJCode->variable('boolResult'));
+        unset($classJCode);
+    }
+
+    public function testJCodeVariableSetExecuteJson() {
+        $classJCode = new Mossengine\JCode\JCode;
+        $classJCode->executeJson(json_encode([
             'variables' => [
                 'boolResult' => false
             ],
@@ -38,7 +62,7 @@ class JCodeTest extends PHPUnit_Framework_TestCase
 
     public function testJCodeSubInstructions() {
         $classJCode = new Mossengine\JCode\JCode;
-        $classJCode->execute(json_encode([
+        $classJCode->execute([
             'variables' => [
                 'boolResult' => false,
             ],
@@ -64,7 +88,7 @@ class JCodeTest extends PHPUnit_Framework_TestCase
                     ]
                 ]
             ]
-        ]));
+        ]);
 
         $this->assertTrue(true === $classJCode->variable('boolResult'));
         unset($classJCode);
@@ -72,7 +96,7 @@ class JCodeTest extends PHPUnit_Framework_TestCase
 
     public function testJCodeCondtions() {
         $classJCode = new Mossengine\JCode\JCode;
-        $classJCode->execute(json_encode([
+        $classJCode->execute([
             'variables' => [
                 'intLeft' => 5,
                 'boolResult' => false
@@ -169,7 +193,7 @@ class JCodeTest extends PHPUnit_Framework_TestCase
                     ]
                 ]
             ]
-        ]));
+        ]);
 
         $this->assertTrue(true === $classJCode->variable('boolResult'));
         unset($classJCode);
@@ -177,7 +201,7 @@ class JCodeTest extends PHPUnit_Framework_TestCase
 
     public function testJCodeIterateEachVariable() {
         $classJCode = new Mossengine\JCode\JCode;
-        $classJCode->execute(json_encode([
+        $classJCode->execute([
             'variables' => [
                 'boolResult' => false,
                 'intSum' => 0,
@@ -256,7 +280,7 @@ class JCodeTest extends PHPUnit_Framework_TestCase
                     ]
                 ]
             ]
-        ]));
+        ]);
 
         $this->assertTrue(true === $classJCode->variable('boolResult'));
         unset($classJCode);
@@ -264,7 +288,7 @@ class JCodeTest extends PHPUnit_Framework_TestCase
 
     public function testJCodeIterateEachValue() {
         $classJCode = new Mossengine\JCode\JCode;
-        $classJCode->execute(json_encode([
+        $classJCode->execute([
             'variables' => [
                 'boolResult' => false,
                 'intSum' => 0
@@ -342,7 +366,7 @@ class JCodeTest extends PHPUnit_Framework_TestCase
                     ]
                 ]
             ]
-        ]));
+        ]);
 
         $this->assertTrue(true === $classJCode->variable('boolResult'));
         unset($classJCode);
@@ -350,7 +374,7 @@ class JCodeTest extends PHPUnit_Framework_TestCase
 
     public function testJCodeIterateFor() {
         $classJCode = new Mossengine\JCode\JCode;
-        $classJCode->execute(json_encode([
+        $classJCode->execute([
             'variables' => [
                 'boolResult' => false,
                 'intSumStepOne' => 0,
@@ -469,7 +493,7 @@ class JCodeTest extends PHPUnit_Framework_TestCase
                     ]
                 ]
             ]
-        ]));
+        ]);
 
         $this->assertTrue(true === $classJCode->variable('boolResult'));
         unset($classJCode);

@@ -37,10 +37,15 @@ class JCode
     /**
      * @param string $stringJCode
      */
-    public function execute($stringJCode = '[]') {
+    public function executeJson($stringJCode = '[]') {
         // decode the JCode string
-        $arrayJCode = json_decode($stringJCode, true);
+        $this->execute(json_decode($stringJCode, true));
+    }
 
+    /**
+     * @param array $arrayJCode
+     */
+    public function execute(array $arrayJCode = []) {
         // Get the variables from the JCode
         $this->arrayVariables = $this->array_get($arrayJCode, 'variables', []);
 
