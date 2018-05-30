@@ -220,16 +220,16 @@ class JCode
 
     private function iterators(array $arrayIterators = []) {
         foreach ($arrayIterators as $arrayIterator) {
-            $this->variable('iterate.key', null);
+            $this->variable('iterate.index', null);
             $this->variable('iterate.value', null);
             switch ($this->array_get($arrayIterator, 'type', null)) {
                 case 'for':
                     for (
                         $i = $this->array_get($arrayIterator, 'start', 1);
-                        $i < $this->array_get($arrayIterator, 'limit', 10);
+                        $i <= $this->array_get($arrayIterator, 'limit', 10);
                         $i += $this->array_get($arrayIterator, 'step', 1)
                     ) {
-                        $this->variable('iterate.key', $i);
+                        $this->variable('iterate.index', $i);
                         $this->instructions($this->array_get($arrayIterator, 'instructions', []));
                     }
                     break;
@@ -246,7 +246,7 @@ class JCode
 
                     if (is_array($arrayToIterate)) {
                         foreach ($arrayToIterate as $mixedIterateKey => $mixedIterateValue) {
-                            $this->variable('iterate.key', $mixedIterateKey);
+                            $this->variable('iterate.index', $mixedIterateKey);
                             $this->variable('iterate.value', $mixedIterateValue);
                             $this->instructions($this->array_get($arrayIterator, 'instructions', []));
                         }
