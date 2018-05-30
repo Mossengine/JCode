@@ -2,14 +2,14 @@
 
 namespace Mossengine\JCode;
 
-use Illuminate\Support\Arr;
-
 /**
  * Class JCode
  * @package Mossengine\JCode
  */
 class JCode
 {
+    use ArrTrait;
+
     /**
      * @var array
      */
@@ -18,8 +18,13 @@ class JCode
     /**
      * @var array
      */
-    private $arraySupportedFunctions = [
-        'rand'
+    private $arraySupportedJCodeFunctions = [
+        'php.rand' => 'rand',
+
+        'math.addition' => '\Mossengine\JCode\Math::addition',
+        'math.subtract' => '\Mossengine\JCode\Math::subtract',
+        'math.divide' => '\Mossengine\JCode\Math::divide',
+        'math.multiply' => '\Mossengine\JCode\Math::multiply'
     ];
 
     /**
@@ -27,51 +32,6 @@ class JCode
      */
     public function __construct($arrayParameters = []) {
         // Setup goes here...
-    }
-
-    /**
-     * Class helper function to get objects at array key
-     *
-     * @param $array
-     * @param $key
-     * @param null $default
-     * @return mixed
-     */
-    private function array_get($array, $key, $default = null) {
-        return Arr::get($array, $key, $default);
-    }
-
-    /**
-     * Class helper function to set objects at array key
-     *
-     * @param $array
-     * @param $key
-     * @param $value
-     * @return array
-     */
-    private function array_set(&$array, $key, $value) {
-        return Arr::set($array, $key, $value);
-    }
-
-    /**
-     * Class helper function to check if an array has a key with an object
-     *
-     * @param $array
-     * @param $keys
-     * @return bool
-     */
-    private function array_has($array, $keys) {
-        return Arr::has($array, $keys);
-    }
-
-    /**
-     * Class helper function to forget the object at a key
-     *
-     * @param $array
-     * @param $keys
-     */
-    private function array_forget(&$array, $keys) {
-        Arr::forget($array, $keys);
     }
 
     /**
@@ -92,6 +52,9 @@ class JCode
         // Process each instruction
         foreach ($arrayInstructions as $arrayInstruction) {
             switch ($this->array_get($arrayInstruction, 'type', null)) {
+                case 'instructions':
+                    $this->instructions($this->array_get($arrayInstruction, 'instructions', []));
+                    break;
                 case 'variables':
                     $this->variables($this->array_get($arrayInstruction, 'variables', []));
                     break;
@@ -106,25 +69,32 @@ class JCode
                         $this->instructions($this->array_get($arrayInstruction, 'instructions', []));
                     }
                     break;
+                case 'iterators':
+                    $this->iterators($this->array_get($arrayInstruction, 'iterators', []));
+                    break;
             }
         }
     }
 
     public function variable($name = null, $value = 'SuperCatMonkeyHotDog') {
         if ('SuperCatMonkeyHotDog' !== $value) {
-            $this->array_set($this->arrayVariables, $name, $value);
+            if (!is_null($value)) {
+                $this->array_set($this->arrayVariables, $name, $value);
+            } else {
+                $this->array_forget($this->arrayVariables, $name);
+            }
         }
-        return $this->array_get($this->arrayVariables, $name);
+        return $this->array_get($this->arrayVariables, $name, null);
     }
 
     private function variables(array $arrayVariables = []) {
         foreach ($arrayVariables as $arrayVariable) {
             switch ($this->array_get($arrayVariable, 'type', null)) {
-                case 'value':
-                    $this->variable($this->array_get($arrayVariable, 'variable', 'default'), $this->array_get($arrayVariable, 'value', null));
-                    break;
                 case 'variable':
                     $this->variable($this->array_get($arrayVariable, 'variable', 'default'), $this->variable($this->array_get($arrayVariable, 'variable', 'default')));
+                    break;
+                case 'value':
+                    $this->variable($this->array_get($arrayVariable, 'variable', 'default'), $this->array_get($arrayVariable, 'value', null));
                     break;
             }
         }
@@ -132,7 +102,7 @@ class JCode
 
     private function functions(array $arrayFunctions = []) {
         foreach ($arrayFunctions as $arrayFunction) {
-            if (in_array($this->array_get($arrayFunction, 'type', null), $this->arraySupportedFunctions)) {
+            if ($this->array_has($arrayFunction, 'parameters')) {
                 $arrayParameters = array_map(
                     function ($arrayParameter) {
                         switch ($this->array_get($arrayParameter, 'type', null)) {
@@ -148,7 +118,17 @@ class JCode
                     },
                     $this->array_get($arrayFunction, 'parameters', [])
                 );
-                $result = call_user_func($this->array_get($arrayFunction, 'type', null), $arrayParameters);
+            } else {
+                $arrayParameters = [];
+            }
+
+            $result = null;
+
+            if (in_array($this->array_get($arrayFunction, 'type', null), array_keys($this->arraySupportedJCodeFunctions))) {
+                $result = call_user_func($this->array_get($this->arraySupportedJCodeFunctions, $this->array_get($arrayFunction, 'type', null), null), $arrayParameters);
+            }
+
+            if (!empty($result)) {
                 foreach ($this->array_get($arrayFunction, 'returns', []) as $arrayReturn) {
                     switch ($this->array_get($arrayReturn, 'type', null)) {
                         case 'variable':
@@ -236,5 +216,43 @@ class JCode
             }
         }
         return ['all' => $boolAll, 'any' => $boolAny];
+    }
+
+    private function iterators(array $arrayIterators = []) {
+        foreach ($arrayIterators as $arrayIterator) {
+            $this->variable('iterate.key', null);
+            $this->variable('iterate.value', null);
+            switch ($this->array_get($arrayIterator, 'type', null)) {
+                case 'for':
+                    for (
+                        $i = $this->array_get($arrayIterator, 'start', 1);
+                        $i < $this->array_get($arrayIterator, 'limit', 10);
+                        $i += $this->array_get($arrayIterator, 'step', 1)
+                    ) {
+                        $this->variable('iterate.key', $i);
+                        $this->instructions($this->array_get($arrayIterator, 'instructions', []));
+                    }
+                    break;
+                case 'each':
+                    $arrayToIterate = [];
+                    switch ($this->array_get($arrayIterator, 'each', null)) {
+                        case 'variable':
+                            $arrayToIterate = $this->variable($this->array_get($arrayIterator, 'variable', 'default'));
+                            break;
+                        case 'value':
+                            $arrayToIterate = $this->array_get($arrayIterator, 'value', []);
+                            break;
+                    }
+
+                    if (is_array($arrayToIterate)) {
+                        foreach ($arrayToIterate as $mixedIterateKey => $mixedIterateValue) {
+                            $this->variable('iterate.key', $mixedIterateKey);
+                            $this->variable('iterate.value', $mixedIterateValue);
+                            $this->instructions($this->array_get($arrayIterator, 'instructions', []));
+                        }
+                    }
+                    break;
+            }
+        }
     }
 }

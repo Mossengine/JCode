@@ -36,6 +36,40 @@ class JCodeTest extends PHPUnit_Framework_TestCase
         unset($classJCode);
     }
 
+    public function testJCodeSubInstructions() {
+        $classJCode = new Mossengine\JCode\JCode;
+        $classJCode->execute(json_encode([
+            'variables' => [
+                'boolResult' => false,
+            ],
+            'instructions' => [
+                [
+                    'type' => 'instructions',
+                    'instructions' => [
+                        [
+                            'type' => 'instructions',
+                            'instructions' => [
+                                [
+                                    'type' => 'variables',
+                                    'variables' => [
+                                        [
+                                            'variable' => 'boolResult',
+                                            'type' => 'value',
+                                            'value' => true
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]));
+
+        $this->assertTrue(true === $classJCode->variable('boolResult'));
+        unset($classJCode);
+    }
+
     public function testJCodeCondtions() {
         $classJCode = new Mossengine\JCode\JCode;
         $classJCode->execute(json_encode([
@@ -118,6 +152,93 @@ class JCodeTest extends PHPUnit_Framework_TestCase
                                 'type' => 'value',
                                 'value' => 5
                             ],
+                        ]
+                    ],
+                    'validation' => 'all',
+                    'instructions' => [
+                        [
+                            'type' => 'variables',
+                            'variables' => [
+                                [
+                                    'variable' => 'boolResult',
+                                    'type' => 'value',
+                                    'value' => true
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]));
+
+        $this->assertTrue(true === $classJCode->variable('boolResult'));
+        unset($classJCode);
+    }
+
+    public function testJCodeIterateEach() {
+        $classJCode = new Mossengine\JCode\JCode;
+        $classJCode->execute(json_encode([
+            'variables' => [
+                'boolResult' => false,
+                'intSum' => 0,
+                'arrayNumber' => [
+                    'five' => 5,
+                    'seven' => 7,
+                    'nine' => 9,
+                    'two' => 2
+                ]
+            ],
+            'instructions' => [
+                [
+                    'type' => 'iterators',
+                    'iterators' => [
+                        [
+                            'type' => 'each',
+                            'each' => 'variable',
+                            'variable' => 'arrayNumber',
+                            'instructions' => [
+                                [
+                                    'type' => 'functions',
+                                    'functions' => [
+                                        [
+                                            'parameters' => [
+                                                [
+                                                    'type' => 'variable',
+                                                    'variable' => 'intSum'
+                                                ],
+                                                [
+                                                    'type' => 'variable',
+                                                    'variable' => 'iterate.value'
+                                                ]
+                                            ],
+                                            'type' => 'math.addition',
+                                            'returns' => [
+                                                [
+                                                    'type' => 'variable',
+                                                    'variable' => 'intSum'
+                                                ]
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                [
+                    'type' => 'conditions',
+                    'conditions' => [
+                        [
+                            'type' => 'compare',
+                            'left' => [
+                                'type' => 'variable',
+                                'variable' => 'intSum'
+                            ],
+                            'operator' => '==',
+                            'right' => [
+                                'type' => 'value',
+                                'value' => 23
+                            ]
                         ]
                     ],
                     'validation' => 'all',
