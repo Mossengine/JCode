@@ -24,6 +24,7 @@ class JCodeTest extends PHPUnit_Framework_TestCase
                     'variables' => [
                         [
                             'variable' => 'boolResult',
+                            'type' => 'value',
                             'value' => true
                         ]
                     ]
@@ -126,6 +127,7 @@ class JCodeTest extends PHPUnit_Framework_TestCase
                             'variables' => [
                                 [
                                     'variable' => 'boolResult',
+                                    'type' => 'value',
                                     'value' => true
                                 ]
                             ]

@@ -119,7 +119,14 @@ class JCode
 
     private function variables(array $arrayVariables = []) {
         foreach ($arrayVariables as $arrayVariable) {
-            $this->variable($this->array_get($arrayVariable, 'variable', 'default'), $this->array_get($arrayVariable, 'value', null));
+            switch ($this->array_get($arrayVariable, 'type', null)) {
+                case 'value':
+                    $this->variable($this->array_get($arrayVariable, 'variable', 'default'), $this->array_get($arrayVariable, 'value', null));
+                    break;
+                case 'variable':
+                    $this->variable($this->array_get($arrayVariable, 'variable', 'default'), $this->variable($this->array_get($arrayVariable, 'variable', 'default')));
+                    break;
+            }
         }
     }
 
