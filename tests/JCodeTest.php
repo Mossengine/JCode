@@ -200,7 +200,11 @@ class JCodeTest extends PHPUnit_Framework_TestCase
     }
 
     public function testJCodeIterateEachVariable() {
-        $classJCode = new Mossengine\JCode\JCode;
+        $classJCode = new Mossengine\JCode\JCode([
+            'functions' => [
+                'mossengine.jcode.math.addition' => '\Mossengine\JCode\Math::addition',
+            ]
+        ]);
         $classJCode->execute([
             'variables' => [
                 'boolResult' => false,
@@ -235,7 +239,7 @@ class JCodeTest extends PHPUnit_Framework_TestCase
                                                     'variable' => 'iterate.value'
                                                 ]
                                             ],
-                                            'type' => 'math.addition',
+                                            'type' => 'mossengine.jcode.math.addition',
                                             'returns' => [
                                                 [
                                                     'type' => 'variable',
@@ -287,7 +291,11 @@ class JCodeTest extends PHPUnit_Framework_TestCase
     }
 
     public function testJCodeIterateEachValue() {
-        $classJCode = new Mossengine\JCode\JCode;
+        $classJCode = new Mossengine\JCode\JCode([
+            'functions' => [
+                'mossengine.jcode.math.addition' => '\Mossengine\JCode\Math::addition',
+            ]
+        ]);
         $classJCode->execute([
             'variables' => [
                 'boolResult' => false,
@@ -321,7 +329,7 @@ class JCodeTest extends PHPUnit_Framework_TestCase
                                                     'variable' => 'iterate.value'
                                                 ]
                                             ],
-                                            'type' => 'math.addition',
+                                            'type' => 'mossengine.jcode.math.addition',
                                             'returns' => [
                                                 [
                                                     'type' => 'variable',
@@ -373,7 +381,11 @@ class JCodeTest extends PHPUnit_Framework_TestCase
     }
 
     public function testJCodeIterateFor() {
-        $classJCode = new Mossengine\JCode\JCode;
+        $classJCode = new Mossengine\JCode\JCode([
+            'functions' => [
+                'mossengine.jcode.math.addition' => '\Mossengine\JCode\Math::addition',
+            ]
+        ]);
         $classJCode->execute([
             'variables' => [
                 'boolResult' => false,
@@ -404,7 +416,7 @@ class JCodeTest extends PHPUnit_Framework_TestCase
                                                     'variable' => 'iterate.index'
                                                 ]
                                             ],
-                                            'type' => 'math.addition',
+                                            'type' => 'mossengine.jcode.math.addition',
                                             'returns' => [
                                                 [
                                                     'type' => 'variable',
@@ -436,7 +448,7 @@ class JCodeTest extends PHPUnit_Framework_TestCase
                                                     'variable' => 'iterate.index'
                                                 ]
                                             ],
-                                            'type' => 'math.addition',
+                                            'type' => 'mossengine.jcode.math.addition',
                                             'returns' => [
                                                 [
                                                     'type' => 'variable',

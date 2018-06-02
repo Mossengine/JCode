@@ -23,6 +23,18 @@ trait ArrTrait
     }
 
     /**
+     * Class helper function to pull the object at a key
+     *
+     * @param $array
+     * @param $keys
+     * @param null $default
+     * @return mixed
+     */
+    private static function array_pull(&$array, $keys, $default = null) {
+        return Arr::pull($array, $keys, $default);
+    }
+
+    /**
      * Class helper function to set objects at array key
      *
      * @param $array

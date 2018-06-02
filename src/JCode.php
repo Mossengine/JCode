@@ -18,20 +18,14 @@ class JCode
     /**
      * @var array
      */
-    private $arraySupportedJCodeFunctions = [
-        'php.rand' => 'rand',
-
-        'math.addition' => '\Mossengine\JCode\Math::addition',
-        'math.subtract' => '\Mossengine\JCode\Math::subtract',
-        'math.divide' => '\Mossengine\JCode\Math::divide',
-        'math.multiply' => '\Mossengine\JCode\Math::multiply'
-    ];
+    private $arraySupportedJCodeFunctions = [];
 
     /**
-     * Swagabase constructor.
+     * JCode constructor.
+     * @param array $arrayParameters
      */
     public function __construct($arrayParameters = []) {
-        // Setup goes here...
+        $this->arraySupportedJCodeFunctions = array_merge($this->arraySupportedJCodeFunctions, static::array_get($arrayParameters, 'functions', []));
     }
 
     /**
@@ -130,7 +124,7 @@ class JCode
             $result = null;
 
             if (in_array($this->array_get($arrayFunction, 'type', null), array_keys($this->arraySupportedJCodeFunctions))) {
-                $result = call_user_func($this->array_get($this->arraySupportedJCodeFunctions, $this->array_get($arrayFunction, 'type', null), null), $arrayParameters);
+                $result = call_user_func_array($this->array_get($this->arraySupportedJCodeFunctions, $this->array_get($arrayFunction, 'type', null), null), $arrayParameters);
             }
 
             if (!empty($result)) {
