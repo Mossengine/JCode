@@ -225,8 +225,7 @@ class JCode
 
     private function iterators(array $arrayIterators = []) {
         foreach ($arrayIterators as $arrayIterator) {
-            $this->variable('iterate.index', null);
-            $this->variable('iterate.value', null);
+            $stringIdentifier = $this->array_get($arrayIterator, 'identifier', null);
             switch ($this->array_get($arrayIterator, 'type', null)) {
                 case 'for':
                     for (
@@ -234,7 +233,7 @@ class JCode
                         $i <= $this->array_get($arrayIterator, 'limit', 10);
                         $i += $this->array_get($arrayIterator, 'step', 1)
                     ) {
-                        $this->variable('iterate.index', $i);
+                        $this->variable('iterate.' . (!empty($stringIdentifier) ? $stringIdentifier . '.' : '') . 'index', $i);
                         $this->instructions($this->array_get($arrayIterator, 'instructions', []));
                     }
                     break;
@@ -251,13 +250,15 @@ class JCode
 
                     if (is_array($arrayToIterate)) {
                         foreach ($arrayToIterate as $mixedIterateKey => $mixedIterateValue) {
-                            $this->variable('iterate.index', $mixedIterateKey);
-                            $this->variable('iterate.value', $mixedIterateValue);
+                            $this->variable('iterate.' . (!empty($stringIdentifier) ? $stringIdentifier . '.' : '') . 'index', $mixedIterateKey);
+                            $this->variable('iterate.' . (!empty($stringIdentifier) ? $stringIdentifier . '.' : '') . 'value', $mixedIterateValue);
                             $this->instructions($this->array_get($arrayIterator, 'instructions', []));
                         }
                     }
                     break;
             }
+            $this->variable('iterate.' . (!empty($stringIdentifier) ? $stringIdentifier . '.' : '') . 'index', null);
+            $this->variable('iterate.' . (!empty($stringIdentifier) ? $stringIdentifier . '.' : '') . 'value', null);
         }
     }
 }
